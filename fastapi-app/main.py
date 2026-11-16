@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request, HTTPException
-from pydantic import BaseModel
+#from pydantic import BaseModel
+from pydantic import BaseModel, StrictStr, ConfigDict
 from pymongo import MongoClient
 import os
 import requests
@@ -20,11 +21,19 @@ db = mongo[mongo_database]
 elastic_host = os.getenv("ELASTIC_HOST", "elasticsearch")
 elastic_url = f"http://{elastic_host}:9200"
 
-# Modelos de datos 
+# Modelos de datos
+""" 
+#Vulnerable
 class Login(BaseModel):
     username: str
     password: str
+"""
+#Implementación de la clase Login para que rechace un error de cualquier campo adicional que no esté definido explícitamente en la clase
+class Login(BaseModel):
+    model_config = ConfigDict(extra="forbid")
 
+    username: StrictStr
+    password: StrictStr
 
 class Pedido(BaseModel):
     producto: str
@@ -36,16 +45,19 @@ def health():
     mongo.admin.command("ping")
     return {"status": "ok"}
 
-# Endpoint de login vulnerable a NoSQL Injection
+# Endpoint de login protegido
 @app.post("/login_mongo")
-async def login(req: Request):
+#async def login(req: Request):
+async def login(data: Login):
 
-    data = await req.json()
+    #data = await req.json()
 
     user = db.usuarios.find_one(
         {
-            "username": data.get("username"),
-            "password": data.get("password")
+          #  "username": data.get("username"),
+          #  "password": data.get("password")
+            "username": data.username,
+            "password": data.password
         },
         {"_id": 0}
     )

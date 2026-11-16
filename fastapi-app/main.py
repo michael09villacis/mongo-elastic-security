@@ -5,14 +5,20 @@ from pymongo import MongoClient
 import os
 import requests
 
-app = FastAPI(title="API NoSQL (vulnerable)")
+app = FastAPI(title="API NoSQL - mecanismos de Seguridad")
 
 mongo_host = os.getenv("MONGO_HOST", "mongo")
 mongo_database = os.getenv("MONGO_DATABASE", "tienda")
+#Se añade validación con credenciales
+mongo_user = os.getenv("MONGO_USER")
+mongo_password = os.getenv("MONGO_PASSWORD")
 
 mongo = MongoClient(
     host=mongo_host,
     port=27017,
+    username=mongo_user,
+    password=mongo_password,
+    authSource="tienda",
     serverSelectionTimeoutMS=5000
 )
 db = mongo[mongo_database]

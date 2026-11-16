@@ -27,6 +27,11 @@ db = mongo[mongo_database]
 elastic_host = os.getenv("ELASTIC_HOST", "elasticsearch")
 elastic_url = f"http://{elastic_host}:9200"
 
+#Se añaden credenciales de usuario para Elasticsearch
+elastic_user = os.getenv("ELASTIC_USER")
+elastic_password = os.getenv("ELASTIC_PASSWORD")
+
+
 # Modelos de datos
 """ 
 #Vulnerable
@@ -80,13 +85,12 @@ async def login(data: Login):
 # Endpoint de búsqueda en Elasticsearch
 @app.get("/articulos")
 def art_search(q: str = "*"):
-
     response = requests.get(
         f"{elastic_url}/articulos/_search",
         params={"q": q},
+        auth=(elastic_user, elastic_password), # Se añade la autorizacion
         timeout=10
     )
-
     response.raise_for_status()
     return response.json()
     

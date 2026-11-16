@@ -18,8 +18,12 @@ services:
       - "127.0.0.1:9200:9200"
     environment:
       discovery.type: single-node
-      xpack.security.enabled: "false"
+      xpack.security.enabled: "true"
       ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      ELASTIC_USER: ${ELASTIC_USER}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+    volumes:
+      - elastic_data:/usr/share/elasticsearch/data
 
   fastapi-app:
     build: ./fastapi-app
@@ -39,3 +43,5 @@ volumes:
   mongo_data:
     external: true
     name: 8fbacbbc7b6a97a4f1e38837c46df84a6d25242fa97b63bd51f7973dc7c7a6ac
+    
+  elastic_data:

@@ -6,3 +6,5 @@ __pycache__/
 .venv/
 .vscode/
 /tienda-backup.archive
+/articulos-backup.json
+/articulos-restore.ndjson

@@ -1,10 +1,98 @@
+
+# ==========================================
+# 1. VARIABLES DE ENTORNO Y SECRETOS
+# ==========================================
+
 .env
 .env.*
 !.env.example
+
+# ==========================================
+# 2. CERTIFICADOS TLS Y CLAVES PRIVADAS
+# ==========================================
+
+certs/
+*.key
+*.pem
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.csr
+*.srl
+
+# ==========================================
+# 3. COPIAS DE SEGURIDAD Y DATOS
+# ==========================================
+
+*.archive
+*.bak
+*.backup
+*.dump
+*.bson
+*.gz
+*.tar
+*.zip
+
+articulos-backup.json
+articulos-restore.ndjson
+tienda-backup.archive
+
+# Datos persistentes locales
+mongo-data/
+mongodb-data/
+elastic-data/
+elasticsearch-data/
+
+# ==========================================
+# 4. PYTHON Y FASTAPI
+# ==========================================
+
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Entornos virtuales
+venv/
 .venv/
+env/
+
+# ==========================================
+# 5. LOGS Y ARCHIVOS TEMPORALES
+# ==========================================
+
+*.log
+logs/
+tmp/
+temp/
+*.tmp
+
+# ==========================================
+# 6. IDE Y SISTEMA OPERATIVO
+# ==========================================
+
 .vscode/
-/tienda-backup.archive
-/articulos-backup.json
-/articulos-restore.ndjson
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ==========================================
+# 7. DOCKER
+# ==========================================
+
+docker-compose.override.yml
+compose.override.yml
+
+# ==========================================
+# 8. ARCHIVOS DE CONFIGURACION LOCALES
+# ==========================================
+
+*.local
+*.local.yml
+*.local.yaml

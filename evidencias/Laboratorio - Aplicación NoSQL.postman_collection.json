@@ -1,0 +1,1362 @@
+{
+  "info": {
+    "_postman_id": "b64af97d-52e1-430d-a08c-038f74b8f705",
+    "name": "Laboratorio - Aplicación NoSQL",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "60196890",
+    "_collection_link": "https://go.postman.co/collection/60196890-b64af97d-52e1-430d-a08c-038f74b8f705?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "2 Pruebas Exploratorias",
+      "item": [
+        {
+          "name": "GET /pedidos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/pedidos",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "pedidos"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "2.2 Consulta sin autorización de pedidos",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8000/pedidos",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "pedidos"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "date",
+                  "value": "Mon, 16 Nov 2026 00:49:09 GMT"
+                },
+                {
+                  "key": "server",
+                  "value": "uvicorn"
+                },
+                {
+                  "key": "content-length",
+                  "value": "136"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"pedidos\": [\n    {\n      \"producto\": \"Portátil ASUS\",\n      \"cantidad\": 1,\n      \"usuario\": \"peter\"\n    },\n    {\n      \"producto\": \"Ratón Logitech\",\n      \"cantidad\": 2,\n      \"usuario\": \"maria\"\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "POST /login_mongo",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"peter\",\r\n  \"password\": \"peter1234\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8000/login_mongo",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "login_mongo"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "2.2 Validación credenciales incorrectas de forma insegura",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"username\": \"peter\",\r\n  \"password\": \"peter1234\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8000/login_mongo",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "login_mongo"
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "date",
+                  "value": "Mon, 16 Nov 2026 01:02:22 GMT"
+                },
+                {
+                  "key": "server",
+                  "value": "uvicorn"
+                },
+                {
+                  "key": "content-length",
+                  "value": "22"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"detail\": \"Bad creds\"\n}"
+            },
+            {
+              "name": "2.2 Validación con credenciales correctas de forma insegura",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"username\": \"peter\",\r\n  \"password\": \"peter123\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8000/login_mongo",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "login_mongo"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "date",
+                  "value": "Mon, 16 Nov 2026 01:07:34 GMT"
+                },
+                {
+                  "key": "server",
+                  "value": "uvicorn"
+                },
+                {
+                  "key": "content-length",
+                  "value": "12"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"msg\": \"ok\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "GET /articulos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8000/articulos?q=ratón",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "articulos"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "ratón"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "2.2 Consulta de articulos almacenaos en Elasticsearch",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8000/articulos?q=*",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "articulos"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "*"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "date",
+                  "value": "Mon, 16 Nov 2026 02:05:37 GMT"
+                },
+                {
+                  "key": "server",
+                  "value": "uvicorn"
+                },
+                {
+                  "key": "content-length",
+                  "value": "574"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"took\": 41,\n  \"timed_out\": false,\n  \"_shards\": {\n    \"total\": 1,\n    \"successful\": 1,\n    \"skipped\": 0,\n    \"failed\": 0\n  },\n  \"hits\": {\n    \"total\": {\n      \"value\": 3,\n      \"relation\": \"eq\"\n    },\n    \"max_score\": 1,\n    \"hits\": [\n      {\n        \"_index\": \"articulos\",\n        \"_type\": \"_doc\",\n        \"_id\": \"1\",\n        \"_score\": 1,\n        \"_source\": {\n          \"nombre\": \"Portátil ASUS\",\n          \"categoria\": \"Informática\",\n          \"precio\": 799\n        }\n      },\n      {\n        \"_index\": \"articulos\",\n        \"_type\": \"_doc\",\n        \"_id\": \"2\",\n        \"_score\": 1,\n        \"_source\": {\n          \"nombre\": \"Ratón Logitech\",\n          \"categoria\": \"Accesorios\",\n          \"precio\": 25\n        }\n      },\n      {\n        \"_index\": \"articulos\",\n        \"_type\": \"_doc\",\n        \"_id\": \"3\",\n        \"_score\": 1,\n        \"_source\": {\n          \"nombre\": \"Teclado mecánico\",\n          \"categoria\": \"Accesorios\",\n          \"precio\": 65\n        }\n      }\n    ]\n  }\n}"
+            },
+            {
+              "name": "2.2 Consulta de articulo \"raton\"",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:8000/articulos?q=ratón",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "articulos"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "ratón"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "date",
+                  "value": "Mon, 16 Nov 2026 02:15:27 GMT"
+                },
+                {
+                  "key": "server",
+                  "value": "uvicorn"
+                },
+                {
+                  "key": "content-length",
+                  "value": "307"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"took\": 3,\n  \"timed_out\": false,\n  \"_shards\": {\n    \"total\": 1,\n    \"successful\": 1,\n    \"skipped\": 0,\n    \"failed\": 0\n  },\n  \"hits\": {\n    \"total\": {\n      \"value\": 1,\n      \"relation\": \"eq\"\n    },\n    \"max_score\": 0.9808291,\n    \"hits\": [\n      {\n        \"_index\": \"articulos\",\n        \"_type\": \"_doc\",\n        \"_id\": \"2\",\n        \"_score\": 0.9808291,\n        \"_source\": {\n          \"nombre\": \"Ratón Logitech\",\n          \"categoria\": \"Accesorios\",\n          \"precio\": 25\n        }\n      }\n    ]\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3 Ataques controlados",
+      "item": [
+        {
+          "name": "noSQLi /login_mongo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"username\": \"peter\",\r\n    \"password\": {\r\n        \"$ne\": \"x\"\r\n    }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8000/login_mongo",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "login_mongo"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "noSQL Injection en Mongo DB",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"username\": \"peter\",\r\n    \"password\": {\r\n        \"$ne\": \"x\"\r\n    }\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{baseUrl}}/login_mongo",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "login_mongo"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "date",
+                  "value": "Mon, 16 Nov 2026 03:08:01 GMT"
+                },
+                {
+                  "key": "server",
+                  "value": "uvicorn"
+                },
+                {
+                  "key": "content-length",
+                  "value": "12"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"msg\": \"ok\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Pruebas de acceso indebido - Elasticsearch",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:9200/_search?pretty",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "9200",
+              "path": [
+                "_search"
+              ],
+              "query": [
+                {
+                  "key": "pretty",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Prueba de acceso indebido _cat - Elasticsearch",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:9200/_cat/indices?v",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "9200",
+                  "path": [
+                    "_cat",
+                    "indices"
+                  ],
+                  "query": [
+                    {
+                      "key": "v",
+                      "value": null
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "text",
+              "header": [
+                {
+                  "key": "X-elastic-product",
+                  "value": "Elasticsearch"
+                },
+                {
+                  "key": "content-type",
+                  "value": "text/plain; charset=UTF-8"
+                },
+                {
+                  "key": "content-encoding",
+                  "value": "gzip"
+                },
+                {
+                  "key": "content-length",
+                  "value": "217"
+                }
+              ],
+              "cookie": [],
+              "body": "health status index            uuid                   pri rep docs.count docs.deleted store.size pri.store.size\ngreen  open   .geoip_databases K4m6bMgvTBuXjbIkwweLbg   1   0         33            0     31.8mb         31.8mb\nyellow open   articulos        Ki0QApYiRemu9pphIkC1uA   1   1          3            0      5.2kb          5.2kb\n"
+            },
+            {
+              "name": "Prueba de acceso indebido _search - Elasticsearch",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:9200/_search?pretty",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "9200",
+                  "path": [
+                    "_search"
+                  ],
+                  "query": [
+                    {
+                      "key": "pretty",
+                      "value": null
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "X-elastic-product",
+                  "value": "Elasticsearch"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json; charset=UTF-8"
+                },
+                {
+                  "key": "content-encoding",
+                  "value": "gzip"
+                },
+                {
+                  "key": "content-length",
+                  "value": "353"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"took\": 15,\n  \"timed_out\": false,\n  \"_shards\": {\n    \"total\": 1,\n    \"successful\": 1,\n    \"skipped\": 0,\n    \"failed\": 0\n  },\n  \"hits\": {\n    \"total\": {\n      \"value\": 3,\n      \"relation\": \"eq\"\n    },\n    \"max_score\": 1,\n    \"hits\": [\n      {\n        \"_index\": \"articulos\",\n        \"_type\": \"_doc\",\n        \"_id\": \"1\",\n        \"_score\": 1,\n        \"_source\": {\n          \"nombre\": \"Portátil ASUS\",\n          \"categoria\": \"Informática\",\n          \"precio\": 799\n        }\n      },\n      {\n        \"_index\": \"articulos\",\n        \"_type\": \"_doc\",\n        \"_id\": \"2\",\n        \"_score\": 1,\n        \"_source\": {\n          \"nombre\": \"Ratón Logitech\",\n          \"categoria\": \"Accesorios\",\n          \"precio\": 25\n        }\n      },\n      {\n        \"_index\": \"articulos\",\n        \"_type\": \"_doc\",\n        \"_id\": \"3\",\n        \"_score\": 1,\n        \"_source\": {\n          \"nombre\": \"Teclado mecánico\",\n          \"categoria\": \"Accesorios\",\n          \"precio\": 65\n        }\n      }\n    ]\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4 Mecanismos de seguridad",
+      "item": [
+        {
+          "name": "Elasticsearch Securizado",
+          "item": [
+            {
+              "name": "PUT /_security/role/fast_api_reader -  Crear rol",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "elastic",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "123456",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"indices\": [\r\n        {\r\n            \"names\": [\r\n                \"articulos\"\r\n            ],\r\n            \"privileges\": [\r\n                \"read\",\r\n                \"view_index_metadata\"\r\n            ]\r\n        }\r\n    ]\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:9200/_security/role/fastapi_reader",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "9200",
+                  "path": [
+                    "_security",
+                    "role",
+                    "fastapi_reader"
+                  ]
+                },
+                "description": "Generated from cURL: curl.exe -u elastic -X PUT \"http://localhost:9200/_security/role/fastapi_reader\" -H \"Content-Type: application/json\" -d '{\\\"indices\\\":[{\\\"names\\\":[\\\"articulos\\\"],\\\"privileges\\\":[\\\"read\\\",\\\"view_index_metadata\\\"]}]}'"
+              },
+              "response": [
+                {
+                  "name": "Creacion del rol - fastapi_reader",
+                  "originalRequest": {
+                    "method": "PUT",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n    \"indices\": [\r\n        {\r\n            \"names\": [\r\n                \"articulos\"\r\n            ],\r\n            \"privileges\": [\r\n                \"read\",\r\n                \"view_index_metadata\"\r\n            ]\r\n        }\r\n    ]\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:9200/_security/role/fastapi_reader",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "9200",
+                      "path": [
+                        "_security",
+                        "role",
+                        "fastapi_reader"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "X-elastic-product",
+                      "value": "Elasticsearch"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json; charset=UTF-8"
+                    },
+                    {
+                      "key": "content-encoding",
+                      "value": "gzip"
+                    },
+                    {
+                      "key": "content-length",
+                      "value": "51"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"role\": {\n    \"created\": true\n  }\n}"
+                }
+              ]
+            },
+            {
+              "name": "POST /_security/user/fastapi_elastic -  Crear usuario",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "type": "text/javascript",
+                    "exec": [
+                      "var password = 'test1234'\r\npm.environment.set(\"password\");"
+                    ]
+                  }
+                }
+              ],
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "elastic",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "123456",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"password\": \"{{password}}\",\r\n  \"roles\": [\"fastapi_reader\"],\r\n  \"full_name\": \"Cuenta técnica FastAPI\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:9200/_security/user/fastapi_elastic",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "9200",
+                  "path": [
+                    "_security",
+                    "user",
+                    "fastapi_elastic"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Creación del usuario - fastapi_elastic",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"password\": \"{{password}}\",\r\n  \"roles\": [\"fastapi_reader\"],\r\n  \"full_name\": \"Cuenta técnica FastAPI\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:9200/_security/user/fastapi_elastic",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "9200",
+                      "path": [
+                        "_security",
+                        "user",
+                        "fastapi_elastic"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "X-elastic-product",
+                      "value": "Elasticsearch"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json; charset=UTF-8"
+                    },
+                    {
+                      "key": "content-encoding",
+                      "value": "gzip"
+                    },
+                    {
+                      "key": "content-length",
+                      "value": "42"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"created\": true\n}"
+                }
+              ]
+            },
+            {
+              "name": "GET /_security/user/fastapi_elastic -  Autorizacion con usuario",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "fastapi_elastic",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{password}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:9200/_security/_authenticate",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "9200",
+                  "path": [
+                    "_security",
+                    "_authenticate"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Autenticación con el usuario -fastapi_elastic",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [
+                      {
+                        "key": "Content-Type",
+                        "value": "application/json"
+                      }
+                    ],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:9200/_security/_authenticate",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "9200",
+                      "path": [
+                        "_security",
+                        "_authenticate"
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "X-elastic-product",
+                      "value": "Elasticsearch"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json; charset=UTF-8"
+                    },
+                    {
+                      "key": "content-encoding",
+                      "value": "gzip"
+                    },
+                    {
+                      "key": "content-length",
+                      "value": "189"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"username\": \"fastapi_elastic\",\n  \"roles\": [\n    \"fastapi_reader\"\n  ],\n  \"full_name\": \"Cuenta técnica FastAPI\",\n  \"email\": null,\n  \"metadata\": {},\n  \"enabled\": true,\n  \"authentication_realm\": {\n    \"name\": \"default_native\",\n    \"type\": \"native\"\n  },\n  \"lookup_realm\": {\n    \"name\": \"default_native\",\n    \"type\": \"native\"\n  },\n  \"authentication_type\": \"realm\"\n}"
+                }
+              ]
+            },
+            {
+              "name": "Validaciones de control de acceso - Elasticsearch",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "fastapi_elastic",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{password}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:9200/_search?pretty",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "9200",
+                  "path": [
+                    "_search"
+                  ],
+                  "query": [
+                    {
+                      "key": "pretty",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Validaciones de control de acceso - Elasticsearch",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "http://localhost:9200/_search?pretty",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "9200",
+                      "path": [
+                        "_search"
+                      ],
+                      "query": [
+                        {
+                          "key": "pretty",
+                          "value": null
+                        }
+                      ]
+                    }
+                  },
+                  "status": "OK",
+                  "code": 200,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "X-elastic-product",
+                      "value": "Elasticsearch"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json; charset=UTF-8"
+                    },
+                    {
+                      "key": "content-encoding",
+                      "value": "gzip"
+                    },
+                    {
+                      "key": "content-length",
+                      "value": "359"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"took\": 18,\n  \"timed_out\": false,\n  \"_shards\": {\n    \"total\": 1,\n    \"successful\": 1,\n    \"skipped\": 0,\n    \"failed\": 0\n  },\n  \"hits\": {\n    \"total\": {\n      \"value\": 3,\n      \"relation\": \"eq\"\n    },\n    \"max_score\": 1,\n    \"hits\": [\n      {\n        \"_index\": \"articulos\",\n        \"_type\": \"_doc\",\n        \"_id\": \"1\",\n        \"_score\": 1,\n        \"_source\": {\n          \"nombre\": \"PortÃ¡til ASUS\",\n          \"categoria\": \"InformÃ¡tica\",\n          \"precio\": 799\n        }\n      },\n      {\n        \"_index\": \"articulos\",\n        \"_type\": \"_doc\",\n        \"_id\": \"2\",\n        \"_score\": 1,\n        \"_source\": {\n          \"nombre\": \"RatÃ³n Logitech\",\n          \"categoria\": \"Accesorios\",\n          \"precio\": 25\n        }\n      },\n      {\n        \"_index\": \"articulos\",\n        \"_type\": \"_doc\",\n        \"_id\": \"3\",\n        \"_score\": 1,\n        \"_source\": {\n          \"nombre\": \"Teclado mecÃ¡nico\",\n          \"categoria\": \"Accesorios\",\n          \"precio\": 65\n        }\n      }\n    ]\n  }\n}"
+                }
+              ]
+            },
+            {
+              "name": "Validaciones de acceso no autorizado",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "fastapi_elastic",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{password}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "http://localhost:9200/_cat/indices?v",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "9200",
+                  "path": [
+                    "_cat",
+                    "indices"
+                  ],
+                  "query": [
+                    {
+                      "key": "v",
+                      "value": ""
+                    }
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "403 Acceso no autorizado",
+                  "originalRequest": {
+                    "method": "GET",
+                    "header": [],
+                    "url": {
+                      "raw": "http://localhost:9200/_cat/indices?v",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "9200",
+                      "path": [
+                        "_cat",
+                        "indices"
+                      ],
+                      "query": [
+                        {
+                          "key": "v",
+                          "value": null
+                        }
+                      ]
+                    }
+                  },
+                  "status": "Forbidden",
+                  "code": 403,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "X-elastic-product",
+                      "value": "Elasticsearch"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json; charset=UTF-8"
+                    },
+                    {
+                      "key": "content-encoding",
+                      "value": "gzip"
+                    },
+                    {
+                      "key": "content-length",
+                      "value": "285"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"error\": {\n    \"root_cause\": [\n      {\n        \"type\": \"security_exception\",\n        \"reason\": \"action [indices:monitor/stats] is unauthorized for user [fastapi_elastic] with roles [fastapi_reader], this action is granted by the index privileges [monitor,manage,all]\",\n        \"suppressed\": [\n          {\n            \"type\": \"security_exception\",\n            \"reason\": \"action [cluster:monitor/state] is unauthorized for user [fastapi_elastic] with roles [fastapi_reader], this action is granted by the cluster privileges [read_ccr,transport_client,manage_ccr,monitor,manage,all]\"\n          },\n          {\n            \"type\": \"security_exception\",\n            \"reason\": \"action [cluster:monitor/health] is unauthorized for user [fastapi_elastic] with roles [fastapi_reader], this action is granted by the cluster privileges [monitor,manage,all]\"\n          }\n        ]\n      }\n    ],\n    \"type\": \"security_exception\",\n    \"reason\": \"action [indices:monitor/stats] is unauthorized for user [fastapi_elastic] with roles [fastapi_reader], this action is granted by the index privileges [monitor,manage,all]\",\n    \"suppressed\": [\n      {\n        \"type\": \"security_exception\",\n        \"reason\": \"action [cluster:monitor/state] is unauthorized for user [fastapi_elastic] with roles [fastapi_reader], this action is granted by the cluster privileges [read_ccr,transport_client,manage_ccr,monitor,manage,all]\"\n      },\n      {\n        \"type\": \"security_exception\",\n        \"reason\": \"action [cluster:monitor/health] is unauthorized for user [fastapi_elastic] with roles [fastapi_reader], this action is granted by the cluster privileges [monitor,manage,all]\"\n      }\n    ]\n  },\n  \"status\": 403\n}"
+                }
+              ]
+            },
+            {
+              "name": "Validaciones de intento de escritura no autorizado",
+              "request": {
+                "auth": {
+                  "type": "basic",
+                  "basic": [
+                    {
+                      "key": "username",
+                      "value": "fastapi_elastic",
+                      "type": "string"
+                    },
+                    {
+                      "key": "password",
+                      "value": "{{password}}",
+                      "type": "string"
+                    }
+                  ]
+                },
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"nombre\": \"PRUEBA_RBAC\",\r\n  \"precio\": 100,\r\n  \"categoria\": \"Seguridad\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:9200/articulos/_doc",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "9200",
+                  "path": [
+                    "articulos",
+                    "_doc"
+                  ]
+                }
+              },
+              "response": [
+                {
+                  "name": "Validaciones de intento de escritura no autorizado",
+                  "originalRequest": {
+                    "method": "POST",
+                    "header": [],
+                    "body": {
+                      "mode": "raw",
+                      "raw": "{\r\n  \"nombre\": \"PRUEBA_RBAC\",\r\n  \"precio\": 100,\r\n  \"categoria\": \"Seguridad\"\r\n}",
+                      "options": {
+                        "raw": {
+                          "language": "json"
+                        }
+                      }
+                    },
+                    "url": {
+                      "raw": "http://localhost:9200/articulos/_doc",
+                      "protocol": "http",
+                      "host": [
+                        "localhost"
+                      ],
+                      "port": "9200",
+                      "path": [
+                        "articulos",
+                        "_doc"
+                      ]
+                    }
+                  },
+                  "status": "Forbidden",
+                  "code": 403,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "X-elastic-product",
+                      "value": "Elasticsearch"
+                    },
+                    {
+                      "key": "content-type",
+                      "value": "application/json; charset=UTF-8"
+                    },
+                    {
+                      "key": "content-encoding",
+                      "value": "gzip"
+                    },
+                    {
+                      "key": "content-length",
+                      "value": "215"
+                    }
+                  ],
+                  "cookie": [],
+                  "body": "{\n  \"error\": {\n    \"root_cause\": [\n      {\n        \"type\": \"security_exception\",\n        \"reason\": \"action [indices:data/write/index] is unauthorized for user [fastapi_elastic] with roles [fastapi_reader], this action is granted by the index privileges [create_doc,create,index,write,all]\"\n      }\n    ],\n    \"type\": \"security_exception\",\n    \"reason\": \"action [indices:data/write/index] is unauthorized for user [fastapi_elastic] with roles [fastapi_reader], this action is granted by the index privileges [create_doc,create,index,write,all]\"\n  },\n  \"status\": 403\n}"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "POST login_mongo - Validaciones Auth y RBAC",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"username\": \"peter\",\r\n  \"password\": \"incorrecto\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8000/login_mongo",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8000",
+              "path": [
+                "login_mongo"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "422 unprocessable Entity - Inyeccion no efectuada",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"username\": \"peter\",\r\n    \"password\": {\r\n        \"$ne\": \"x\"\r\n    }\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8000/login_mongo",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "login_mongo"
+                  ]
+                }
+              },
+              "status": "Unprocessable Entity",
+              "code": 422,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "date",
+                  "value": "Mon, 16 Nov 2026 19:03:34 GMT"
+                },
+                {
+                  "key": "server",
+                  "value": "uvicorn"
+                },
+                {
+                  "key": "content-length",
+                  "value": "120"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"detail\": [\n    {\n      \"type\": \"string_type\",\n      \"loc\": [\n        \"body\",\n        \"password\"\n      ],\n      \"msg\": \"Input should be a valid string\",\n      \"input\": {\n        \"$ne\": \"x\"\n      }\n    }\n  ]\n}"
+            },
+            {
+              "name": "200 OK - Acceso con credenciales correctas",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"username\": \"peter\",\r\n  \"password\": \"peter123\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8000/login_mongo",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "login_mongo"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "date",
+                  "value": "Mon, 16 Nov 2026 19:09:17 GMT"
+                },
+                {
+                  "key": "server",
+                  "value": "uvicorn"
+                },
+                {
+                  "key": "content-length",
+                  "value": "12"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"msg\": \"ok\"\n}"
+            },
+            {
+              "name": "401 Unauthorized - Acceso denegado",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n  \"username\": \"peter\",\r\n  \"password\": \"incorrecto\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8000/login_mongo",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8000",
+                  "path": [
+                    "login_mongo"
+                  ]
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "date",
+                  "value": "Mon, 16 Nov 2026 19:10:52 GMT"
+                },
+                {
+                  "key": "server",
+                  "value": "uvicorn"
+                },
+                {
+                  "key": "content-length",
+                  "value": "22"
+                },
+                {
+                  "key": "content-type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n  \"detail\": \"Bad creds\"\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "password",
+      "value": ""
+    }
+  ]
+}

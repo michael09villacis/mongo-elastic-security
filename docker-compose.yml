@@ -2,7 +2,17 @@ services:
   mongo:
     image: mongo:7
     container_name: lab-mongo
-    command: ["mongod", "--auth", "--bind_ip_all"]
+    command:
+    - mongod
+    - --auth
+    - --bind_ip_all
+    - --tlsMode
+    - requireTLS
+    - --tlsCertificateKeyFile
+    - /etc/mongo/certs/server.pem
+    - --tlsCAFile
+    - /etc/mongo/certs/ca.crt
+    - --tlsAllowConnectionsWithoutCertificates
     ports:
       - "127.0.0.1:27017:27017"
     environment:
@@ -10,6 +20,8 @@ services:
     volumes:
       - mongo_data:/data/db
       - ./scripts/init_mongo.js:/docker-entrypoint-initdb.d/init_mongo.js:ro
+      - ./certs/mongodb/server.pem:/etc/mongo/certs/server.pem:ro
+      - ./certs/mongodb/ca.crt:/etc/mongo/certs/ca.crt:ro
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.10
@@ -20,10 +32,19 @@ services:
       discovery.type: single-node
       xpack.security.enabled: "true"
       ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      ELASTIC_HOST: elasticsearch
       ELASTIC_USER: ${ELASTIC_USER}
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD}
+      xpack.security.http.ssl.enabled: "true"
+      xpack.security.http.ssl.key: /usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch.key
+      xpack.security.http.ssl.certificate: /usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch.crt
+      xpack.security.http.ssl.certificate_authorities: /usr/share/elasticsearch/config/certs/ca/ca.crt
     volumes:
       - elastic_data:/usr/share/elasticsearch/data
+      - ./certs/elasticsearch/ca/ca.crt:/usr/share/elasticsearch/config/certs/ca/ca.crt:ro
+      - ./certs/elasticsearch/elasticsearch/elasticsearch.crt:/usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch.crt:ro
+      - ./certs/elasticsearch/elasticsearch/elasticsearch.key:/usr/share/elasticsearch/config/certs/elasticsearch/elasticsearch.key:ro
+
 
   fastapi-app:
     build: ./fastapi-app
@@ -39,6 +60,12 @@ services:
       ELASTIC_HOST: elasticsearch
       MONGO_USER: ${MONGO_USER}
       MONGO_PASSWORD: ${MONGO_PASSWORD}
+    volumes:
+      - ./certs/elasticsearch/ca/ca.crt:/app/certs/ca.crt:ro
+      - ./certs/mongodb/ca.crt:/app/certs/mongodb-ca.crt:ro
+      
+    env_file:
+      - .env
 volumes:
   mongo_data:
     external: true

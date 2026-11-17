@@ -9,29 +9,14 @@ Laboratorio académico de seguridad en bases de datos NoSQL. Se parte de una apl
 | Rama | Finalidad |
 | --- | --- |
 | `vulnerable` | Versión inicial: permite reproducir la inyección NoSQL y los accesos anónimos a MongoDB y Elasticsearch. |
-| `main` | Versión endurecida: validación con Pydantic, autenticación obligatoria y RBAC en MongoDB y Elasticsearch. Trabajo de logging/TLS en curso. |
-
-**Estado de las medidas:**
-
-| Medida | Estado |
-| --- | --- |
-| Despliegue Docker Compose y pruebas iniciales | Verificado |
-| Inyección NoSQL y accesos anónimos en la versión vulnerable | Reproducidos |
-| Validación estricta de entradas con Pydantic | Implementada y verificada |
-| Autenticación y RBAC en MongoDB | Implementados y verificados |
-| Autenticación y RBAC en Elasticsearch | Implementados y verificados directamente en Elasticsearch |
-| Conexión autenticada FastAPI → Elasticsearch | Configurada; pendiente de confirmar en el README la verificación final de ambos filtros de búsqueda |
-| Restricción de puertos a `127.0.0.1` | Configurada |
-| Logging adicional de seguridad en FastAPI | En desarrollo; verificación pendiente |
-| TLS para MongoDB y Elasticsearch | Pendiente; actualmente se utiliza HTTP/TCP sin cifrado TLS |
-| Comparativa final, conclusiones y revisión de entrega | Pendientes de cierre |
+| `main` | Versión securizada: validación con Pydantic, autenticación obligatoria y RBAC en MongoDB y Elasticsearch. TLS activado en MongoDB y Elasticsearch; pendientes las comprobaciones finales de logging y regresión. |
 
 ## 2. Requisitos previos
 
 - Windows 11 y PowerShell (los comandos pueden adaptarse a otros sistemas).
 - Docker Desktop con contenedores Linux y Docker Compose V2.
 - Postman para pruebas HTTP.
-- Git y una cuenta de GitHub si se desea publicar el repositorio.
+- Git y una cuenta de GitHub.
 - No es necesario instalar Python localmente: FastAPI se ejecuta en un contenedor con Python 3.11.
 
 ```powershell
@@ -52,13 +37,17 @@ mongo-elastic-security/
 ├── scripts/
 │   ├── init_mongo.js
 │   └── init_elastic.sh
+├── certs/                     # Certificados y claves locales; excluidos de Git
+│   ├── mongodb/               # ca.crt, server.pem y claves
+│   └── elasticsearch/         # CA y certificado de Elasticsearch
+├── .env                       # Credenciales locales; excluido de Git
 ├── docker-compose.yml
 ├── .gitattributes
 ├── .gitignore
 └── README.md
 ```
 
-El archivo `.env`, los archivos de respaldo y las claves privadas **no deben publicarse**. La memoria PDF de la actividad contiene las capturas y explicaciones de las pruebas.
+La carpeta `certs/` completa, el archivo `.env`, los archivos de respaldo y las claves privadas **no se han publicado por seguridad**. La memoria PDF de la actividad contiene las capturas y explicaciones de las pruebas.
 
 ## 4. Arquitectura y servicios
 
@@ -83,7 +72,7 @@ Documentación interactiva: <http://localhost:8000/docs>.
 
 ## 5. Datos de laboratorio
 
-El script `scripts/init_mongo.js` crea datos ficticios en la base de datos `tienda` durante la **primera inicialización** de un volumen vacío.
+El script `scripts/init_mongo.js` crea datos ficticios en la base de datos `tienda` durante la primera inicialización.
 
 | Usuario de la aplicación | Contraseña de ejemplo | Tipo |
 | --- | --- | --- |
@@ -91,7 +80,7 @@ El script `scripts/init_mongo.js` crea datos ficticios en la base de datos `tien
 | `peter` | `peter123` | Cliente |
 | `maria` | `maria123` | Cliente |
 
-Estos usuarios de la colección `usuarios` **no son** cuentas administrativas de MongoDB ni sustituyen la autenticación de la base de datos. El laboratorio conserva las contraseñas ficticias de la aplicación en texto claro para reproducir el caso inicial; en una aplicación real deberían almacenarse mediante un algoritmo de hash de contraseñas apropiado.
+Estos usuarios de la colección `usuarios` **no son** cuentas administrativas de MongoDB ni sustituyen la autenticación de la base de datos. El laboratorio conserva las contraseñas ficticias de la aplicación en texto claro para reproducir el caso inicial; en una aplicación real deberían almacenarse mediante un algoritmo de hash de contraseñas.
 
 Pedidos de ejemplo: un portátil ASUS para `peter` y dos ratones Logitech para `maria`.
 
@@ -105,7 +94,7 @@ El script `scripts/init_elastic.sh` carga tres artículos:
 
 **Nota:** Docker Compose no ejecuta automáticamente `init_elastic.sh`. El índice se cargó inicialmente mediante un contenedor temporal con `curl`. Después se exportaron sus tres documentos, se creó un volumen persistente y se restauraron con la API `_bulk`.
 
-## 6. Despliegue y particularidades de la configuración actual
+## 6. Despliegue y caraterísticas de la configuración actual
 
 Desde la raíz del proyecto:
 
@@ -129,14 +118,14 @@ La rama `main` utiliza credenciales de cuentas técnicas, definidas en un archiv
 
 ```dotenv
 MONGO_USER=fastapi_user
-MONGO_PASSWORD=REEMPLAZAR_LOCALMENTE
+MONGO_PASSWORD=CONTRASEÑA_LOCAL
 ELASTIC_USER=fastapi_elastic
-ELASTIC_PASSWORD=REEMPLAZAR_LOCALMENTE
+ELASTIC_PASSWORD=CONTRASEÑA_LOCAL
 ```
 
-El servicio `fastapi-app` recibe además `MONGO_HOST=mongo`, `MONGO_DATABASE=tienda` y `ELASTIC_HOST=elasticsearch`. En `main.py`, MongoDB utiliza `authSource="tienda"` y la conexión HTTP a Elasticsearch utiliza autenticación Basic con la cuenta técnica.
+El servicio `fastapi-app` recibe además `MONGO_HOST=mongo`, `MONGO_DATABASE=tienda` y `ELASTIC_HOST=elasticsearch`. En `main.py`, MongoDB utiliza `authSource="tienda"` y la conexión HTTPS a Elasticsearch utiliza autenticación Basic con la cuenta técnica y verificación de la CA. MongoDB usa `tls=True` y `tlsCAFile="/app/certs/mongodb-ca.crt"`.
 
-No se incluyen contraseñas reales en este README. **No basta con crear `.env` para desplegar `main` desde cero:** antes deben existir las cuentas y los roles en las bases de datos.
+No se incluyen contraseñas reales en este README. **No basta con crear `.env` para desplegar `main` desde cero:** antes deben existir las cuentas y los roles en las bases de datos, así como los certificados TLS montados por Docker Compose.
 
 ### 6.2. Persistencia y reproducibilidad
 
@@ -226,14 +215,46 @@ Se cambió `xpack.security.enabled=false` por `true`, se configuró la contrase�
 | Consulta de `/_cat/indices` como `fastapi_elastic` | `403 Forbidden` |
 | Inserción en `articulos` como `fastapi_elastic` | `403 Forbidden` |
 
-FastAPI se configuró para consultar Elasticsearch mediante `ELASTIC_USER` y `ELASTIC_PASSWORD`, sin usar la cuenta administrativa. La comprobación final de `/articulos?q=*` y `/articulos?q=ASUS` con esta nueva conexión debe quedar registrada al cerrar el apartado.
+FastAPI consulta Elasticsearch por HTTPS mediante `ELASTIC_USER` y `ELASTIC_PASSWORD`, sin usar la cuenta administrativa, y valida la CA montada en `/app/certs/ca.crt`. Se verificó una consulta a `/articulos?q=*` con tres documentos. Conviene repetir y registrar la búsqueda `/articulos?q=ASUS` como regresión final.
 
-### 8.4. Puertos, logging y TLS
+### 8.4. TLS en MongoDB: certificados y verificación
 
-- **Puertos:** MongoDB, Elasticsearch y FastAPI se publican en `127.0.0.1` para reducir la exposición externa.
-- **Logging:** se revisaron los logs estándar de los tres servicios. Los de FastAPI registran peticiones y códigos HTTP; los de MongoDB y Elasticsearch mostraron principalmente eventos operativos. Esto **no equivale a auditoría de seguridad completa**.
-- **Logging adicional:** se ha propuesto un middleware de FastAPI para registrar método, ruta, código de respuesta y duración, sin almacenar contraseñas ni cuerpos de petición. Su instalación y prueba final están pendientes de confirmación.
-- **TLS:** **todavía no está implementado**. Elasticsearch utiliza HTTP con autenticación Basic y MongoDB no tiene configurado TLS. El acceso limitado a localhost no cifra el tráfico entre contenedores. La activación de TLS y la verificación de certificados son tareas pendientes.
+MongoDB 7 exige conexiones cifradas mediante `--tlsMode requireTLS`, con `--tlsCertificateKeyFile /etc/mongo/certs/server.pem` y `--tlsCAFile /etc/mongo/certs/ca.crt`. Los archivos se montan desde `./certs/mongodb/` (carpeta local excluida de Git).
+
+Se generó una CA raíz propia de laboratorio (`MongoDB-Lab-CA-v2`) con RSA de 3072 bits y SHA-256, y se firmó el certificado de servidor con extensiones de servidor TLS y SAN para `mongo`, `localhost` y `127.0.0.1`. Durante el proceso se detectó una CA anterior con la extensión `Basic Constraints` duplicada; se sustituyó por una CA nueva, cuya verificación devolvió `OK`. También devolvió `OK` la validación del certificado del servidor con `-purpose sslserver`.
+
+**Comprobación de certificados antes de instalarlos** (ejecutada dentro del contenedor de Elasticsearch, que dispone de OpenSSL):
+
+```powershell
+docker compose exec elasticsearch openssl verify -CAfile /tmp/mongo-ca-v2.crt -check_ss_sig /tmp/mongo-ca-v2.crt
+docker compose exec elasticsearch openssl verify -CAfile /tmp/mongo-ca-v2.crt -purpose sslserver /tmp/mongo-server-v2.crt
+```
+
+Ambas comprobaciones devolvieron `OK` durante la configuración inicial. Las rutas `/tmp/` son **temporales** y no están garantizadas tras recrear el contenedor. Para nuevas instalaciones hay que generar certificados nuevos o utilizar los archivos locales autorizados.
+
+El archivo `server.pem` contiene el certificado y la clave privada del servidor. En FastAPI, PyMongo usa `tls=True` y la CA local montada en `/app/certs/mongodb-ca.crt`; no se desactiva la validación del certificado.
+
+MongoDB rechazó inicialmente a FastAPI con `No SSL certificate provided by peer; connection rejected`, pese a completarse el handshake TLS. Se añadió `--tlsAllowConnectionsWithoutCertificates` para admitir clientes que se autentican mediante usuario y contraseña **sin certificado de cliente**. Esto no desactiva TLS ni la autenticación/RBAC, pero **no implementa autenticación mutua mTLS**.
+
+**Pruebas verificadas después del cambio:**
+
+- `ping` desde FastAPI hacia MongoDB mediante TLS y credenciales técnicas: `{'ok': 1.0}`.
+- Recuento de documentos de `tienda.usuarios` y `tienda.pedidos`: permitido.
+- Intento de `insert_one` en `tienda.usuarios` con `fastapi_user`: denegado con código de autorización `13`.
+- Reinicio de MongoDB y FastAPI con certificados nuevos: ambos servicios arrancaron sin errores.
+
+### 8.5. HTTPS en Elasticsearch
+
+Elasticsearch 7.17.10 tiene `xpack.security.enabled=true` y HTTPS en su interfaz HTTP (`xpack.security.http.ssl.enabled=true`), utilizando un certificado de servidor y una CA local. FastAPI dispone de la CA de Elasticsearch en `/app/certs/ca.crt` para verificar la conexión. La cuenta `fastapi_elastic` mantiene permisos de solo lectura sobre el índice `articulos`.
+
+La configuración cifra el tráfico **HTTP de Elasticsearch**; no debe interpretarse como una verificación del cifrado TLS del transporte interno entre nodos, que no se ha documentado en esta práctica.
+
+### 8.6. Restricción de puertos y registros
+
+- **Puertos:** MongoDB (`27017`), Elasticsearch (`9200`) y FastAPI (`8000`) se publican solo en `127.0.0.1`.
+- **Logging:** se consultaron los registros de los tres servicios; los de MongoDB permitieron identificar el rechazo del cliente sin certificado.
+- **Logging adicional:** se ha trabajado en un middleware de FastAPI para registrar método, ruta, código HTTP y duración sin almacenar contraseñas ni cuerpos. Su cobertura y comprobación final deben confirmarse; los logs operativos no sustituyen una auditoría completa.
+- **Límite de TLS:** el acceso del navegador/Postman a FastAPI continúa por `http://localhost:8000`; TLS se ha configurado en las conexiones de FastAPI con los servicios de datos, no en la interfaz pública de FastAPI.
 
 ## 9. Pruebas de regresión con Postman
 
@@ -246,93 +267,127 @@ Sobre FastAPI (`http://localhost:8000`), sin añadir autenticación Basic a las 
 | `POST /login_mongo` con credenciales válidas | `200 OK` — verificado |
 | `POST /login_mongo` con credenciales incorrectas | `401 Unauthorized` — verificado |
 | `POST /login_mongo` con `$ne` en `password` | `422 Unprocessable Entity` — verificado |
-| `GET /articulos?q=*` | `200 OK`, tres documentos — verificado en la fase inicial; repetir tras autenticación de Elasticsearch |
-| `GET /articulos?q=ASUS` | `200 OK`, artículo ASUS — verificado en la fase inicial; repetir tras autenticación de Elasticsearch |
+| `GET /articulos?q=*` | `200 OK`, tres documentos — verificado con Elasticsearch securizado |
+| `GET /articulos?q=ASUS` | `200 OK`, artículo ASUS — verificado en la fase inicial; repetir y registrar con HTTPS |
 
 En Postman se han organizado pruebas de funcionamiento inicial, ataques y contramedidas. Antes de exportar la colección, **eliminar contraseñas reales, cabeceras `Authorization` y otros secretos**; si hace falta, sustituirlos por variables de entorno de Postman sin valores compartidos.
 
 ## 10. Comprobaciones útiles
 
-### MongoDB: acceso sin credenciales (en `main`)
+### MongoDB: conexión TLS y autenticación desde FastAPI
+
+El siguiente bloque de PowerShell evita problemas de comillas al ejecutar Python dentro del contenedor:
 
 ```powershell
-docker compose exec mongo mongosh tienda --quiet --eval 'db.usuarios.findOne()'
+@'
+from pymongo import MongoClient
+import os
+
+client = MongoClient(
+    host="mongo", port=27017,
+    username=os.getenv("MONGO_USER"),
+    password=os.getenv("MONGO_PASSWORD"),
+    authSource="tienda",
+    tls=True,
+    tlsCAFile="/app/certs/mongodb-ca.crt",
+    serverSelectionTimeoutMS=5000
+)
+print(client.admin.command("ping"))
+print("Usuarios:", client["tienda"]["usuarios"].count_documents({}))
+print("Pedidos:", client["tienda"]["pedidos"].count_documents({}))
+client.close()
+'@ | docker compose exec -T fastapi-app python -
 ```
 
-Resultado esperado: error de autorización.
+Resultado verificado: `{'ok': 1.0}` y lecturas permitidas. El número de documentos depende del estado del volumen.
 
-### MongoDB: conexión de la cuenta técnica
+### MongoDB: escritura denegada por RBAC
 
 ```powershell
-docker compose exec mongo mongosh tienda --username fastapi_user --authenticationDatabase tienda --password
+@'
+from pymongo import MongoClient
+from pymongo.errors import OperationFailure
+import os
+
+client = MongoClient(
+    host="mongo", port=27017,
+    username=os.getenv("MONGO_USER"),
+    password=os.getenv("MONGO_PASSWORD"),
+    authSource="tienda", tls=True,
+    tlsCAFile="/app/certs/mongodb-ca.crt",
+    serverSelectionTimeoutMS=5000
+)
+try:
+    client["tienda"]["usuarios"].insert_one({"_id": "test_rbac_denegado"})
+    print("ERROR: escritura permitida; revisar y eliminar el documento de prueba")
+except OperationFailure as error:
+    if error.code == 13:
+        print("CORRECTO: escritura denegada por RBAC")
+    else:
+        print("ERROR inesperado:", error)
+finally:
+    client.close()
+'@ | docker compose exec -T fastapi-app python -
 ```
 
-Dentro de `mongosh`, comprobar las lecturas y verificar que las escrituras son rechazadas.
+Resultado verificado: `CORRECTO: escritura denegada por RBAC`. No se insertó el documento de prueba.
 
-### Elasticsearch: acceso sin credenciales (en `main`)
+### Elasticsearch: acceso HTTPS sin credenciales
 
 ```powershell
-curl.exe -i "http://localhost:9200/"
+curl.exe --cacert .\certs\elasticsearch\ca\ca.crt -i "https://localhost:9200/"
 ```
 
-Resultado esperado: `401 Unauthorized`.
+Resultado esperado: `401 Unauthorized` cuando el certificado sea válido para `localhost`. No utilizar `-k`/`--insecure` como prueba de validación TLS.
 
-### Elasticsearch: consulta autenticada
+### Elasticsearch: consulta autenticada por HTTPS
 
 ```powershell
-curl.exe -u fastapi_elastic "http://localhost:9200/articulos/_count"
+curl.exe --cacert .\certs\elasticsearch\ca\ca.crt -u fastapi_elastic "https://localhost:9200/articulos/_count"
 ```
 
-La herramienta solicitará la contraseña; el índice contiene tres documentos. **No incluir contraseñas en la línea de comandos ni en el repositorio.**
+`curl` solicitará la contraseña. Si el certificado no incluye `localhost` en sus SAN, el comando fallará por nombre de host; se debe corregir el certificado o usar un nombre cubierto por él, **no desactivar la verificación**. La presencia de HTTPS no elimina la necesidad de autenticación y RBAC.
 
 ### Estado y registros
 
 ```powershell
+docker compose config --quiet
 docker compose ps
 docker compose logs --tail=30 fastapi-app
 docker compose logs --tail=30 mongo
 docker compose logs --tail=30 elasticsearch
 ```
 
-## 11. Riesgos residuales y próximos pasos
+## 11. Seguridad del repositorio público
 
-1. Completar y verificar el middleware de logging de seguridad; valorar centralización, retención y trazabilidad de eventos.
-2. Configurar TLS para las comunicaciones con Elasticsearch y MongoDB, gestionar certificados y validar la cadena de confianza.
-3. Confirmar y documentar la regresión final de `/articulos` con el usuario técnico autenticado.
-4. Preparar un procedimiento reproducible de inicialización para un clon limpio del repositorio, sin depender del volumen externo local de MongoDB.
-5. Completar la comparación antes/después y la reflexión sobre Zero Trust, mínimo privilegio, RGPD y NIS2 en la memoria PDF.
-6. Revisar `.gitignore`, el historial de Git y la colección de Postman antes de publicar en GitHub.
-
-**Limitaciones relevantes:** la autenticación de la aplicación de ejemplo todavía compara contraseñas ficticias en texto claro; no hay TLS habilitado y los registros estándar no proporcionan auditoría completa. Estas limitaciones deben distinguirse de las defensas ya verificadas.
-
-## 12. Seguridad del repositorio público
-
-El archivo `.gitignore` debe excluir al menos:
+El archivo `.gitignore` del proyecto excluye, entre otros:
 
 ```gitignore
 .env
 .env.*
 !.env.example
-/tienda-backup.archive
-/articulos-backup.json
-/articulos-restore.ndjson
+certs/
 *.key
+*.pem
 *.p12
+*.pfx
+*.csr
+*.zip
+*.archive
+*.bson
 __pycache__/
-*.pyc
+*.py[cod]
 .venv/
 ```
 
+Se comprobó que `git ls-files certs .env` no devuelve archivos rastreados tras ejecutar `git rm -r --cached -- certs/`. Se creó un commit con los cambios y se realizó el `push` a `main`. **Esto no garantiza que el historial anterior esté libre de secretos.**
+
 `.gitignore` **no elimina secretos que ya estén incluidos en el historial**. Revisar las dos ramas (`main` y `vulnerable`) antes de publicar y sustituir cualquier credencial real comprometida. Los archivos de ejemplo deben contener únicamente valores ficticios.
 
-## 13. Detener el laboratorio
+## 12. Detener el laboratorio
 
 ```powershell
 docker compose down
 ```
 
-Este comando detiene y elimina los contenedores y redes del proyecto sin solicitar la eliminación de volúmenes. **No utilizar `docker compose down -v`** salvo que se desee eliminar los volúmenes administrados por Compose y reinicializar el entorno. Los volúmenes externos tienen un tratamiento diferente, pero también deben protegerse frente a eliminaciones manuales.
-
----
-
-**Documentación académica:** el informe PDF independiente recoge la metodología, las capturas, los ataques, las defensas y su relación con Zero Trust, mínimo privilegio, RGPD y NIS2.
+Este comando detiene y elimina los contenedores y redes del proyecto sin solicitar la eliminación de volúmenes.
